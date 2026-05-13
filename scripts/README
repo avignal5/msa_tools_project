@@ -1,0 +1,16 @@
+# Extraire positions 100-500, supprimer colonnes de gaps, rotation de 50, calcul pairwise, sauvegarde FASTA et CSV
+./scripts/msa_cli.py alignment.fasta \
+    --ref seq1 \
+    --extract 100 500 \
+    --rotate 50 \
+    --remove-gaps \
+    --pairwise \
+    --out-fasta result.fasta \
+    --out-csv pairwise.csv
+
+# Extraire plusieurs régions depuis un fichier BED
+./scripts/msa_cli.py alignment.fasta \
+    --ref seq1 \
+    --extract-bed regions.bed \
+    --remove-gaps \
+    --out-fasta combined.fasta

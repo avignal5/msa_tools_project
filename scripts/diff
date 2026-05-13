@@ -1,0 +1,4 @@
+Seq1,Seq2,Mismatches,Gaps
+seq1,seq2,1,2
+seq1,seq3,0,1
+seq2,seq3,1,3

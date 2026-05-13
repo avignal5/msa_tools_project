@@ -1,0 +1,15 @@
+README.md
+pyproject.toml
+msa_tools/__init__.py
+msa_tools/alignment.py
+msa_tools/exceptions.py
+msa_tools/gff.py
+msa_tools/io.py
+msa_tools/msa_from_data.py
+msa_tools/plotting.py
+msa_tools/stats.py
+msa_tools.egg-info/PKG-INFO
+msa_tools.egg-info/SOURCES.txt
+msa_tools.egg-info/dependency_links.txt
+msa_tools.egg-info/requires.txt
+msa_tools.egg-info/top_level.txt
