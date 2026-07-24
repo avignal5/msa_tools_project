@@ -26,12 +26,12 @@ class MultipleSequenceAlignment:
 
     def __repr__(self):
         return f"<MSA: {len(self.sequences)} sequences, length={self.length}>"
-    
+
     # ---------------------------------------------------------
     # Coordinate mapping
     # ---------------------------------------------------------
 
-    def _build_coordinate_map(self):
+    def _build_coordinate_map(self):       # the underscore : internal function
         if not self.reference:
             raise AlignmentError("Reference required.")
 
@@ -47,7 +47,106 @@ class MultipleSequenceAlignment:
         return mapping
 
     # ---------------------------------------------------------
-    # Extraction
+    # A subset of sequences
+    # ---------------------------------------------------------
+
+    def subset(self, names):
+        """Return a new alignment containing only the selected sequences."""
+
+        missing = set(names) - set(self.sequences)
+        if missing:
+            raise AlignmentError(
+                f"Unknown sequences: {', '.join(sorted(missing))}"
+            )
+
+        reference = self.reference if self.reference in names else None
+
+        return MultipleSequenceAlignment(
+            {n: self.sequences[n] for n in names},
+            reference=reference,
+        )
+
+    # ---------------------------------------------------------
+    # Reverse complement all or part of a sequence
+    # ---------------------------------------------------------
+
+    @staticmethod
+    def _reverse_complement(seq: str) -> str:
+        table = str.maketrans(
+            "ACGTNacgtn-",
+            "TGCANtgcan-",
+        )
+        return seq.translate(table)[::-1]
+
+    def reverse_complement(
+        self,
+        sequence_name: str,
+        start: int = None,
+        end: int = None,
+        coordinates="alignment",
+    ):
+        """
+        Reverse-complement an entire sequence or a region and return a new MSA.
+
+        Parameters
+        ----------
+        sequence_name : str
+            Sequence to modify.
+        start, end : int, optional
+            Reference coordinates of the region to reverse-complement.
+            If omitted, the entire sequence is reverse-complemented.
+        """
+
+        if sequence_name not in self.sequences:
+            raise AlignmentError(
+                f"Unknown sequence '{sequence_name}'."
+            )
+
+        new_sequences = self.sequences.copy()
+        seq = new_sequences[sequence_name]
+
+        if start is None and end is None:
+            new_sequences[sequence_name] = self._reverse_complement(seq)
+
+        else:
+
+            if coordinates == "reference":
+                mapping = self._build_coordinate_map()
+
+                if start not in mapping or end not in mapping:
+                    raise AlignmentError(
+                        "Coordinates outside reference."
+                    )
+
+                start = mapping[start]
+                end = mapping[end] + 1
+
+            elif coordinates == "alignment":
+                start = start
+                end = end + 1
+
+            else:
+                raise AlignmentError(
+                    "coordinates must be 'alignment' or 'reference'"
+                )
+
+            fragment = seq[start:end]
+
+            new_sequences[sequence_name] = (
+                seq[:start]
+                + self._reverse_complement(fragment)
+                + seq[end:]
+            )
+
+        return MultipleSequenceAlignment(
+            new_sequences,
+            self.reference
+        )
+
+
+
+    # ---------------------------------------------------------
+    # Extraction of specific regions
     # ---------------------------------------------------------
 
     def extract_region(self, start: int, end: int):

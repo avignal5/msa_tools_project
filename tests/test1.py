@@ -9,6 +9,15 @@ print(msa)
 #save the file
 save_fasta(msa, "/Users/avignal/Documents/bin/Python/msa_tools_project/examples/out.fasta")
 
+#subset of sequences
+#!/usr/bin/env python3
+from msa_tools import build_msa_from_getorganelle, read_fasta, save_fasta, MultipleSequenceAlignment
+msa = read_fasta("/Users/avignal/gbigwork/seqapipop/Mitoch_Analysis/Corsica_Sardinia_Paper/all_ref_mafft_1.mfa")
+msa_s = msa.subset(["SLO7_1", "UK23A_1", "AOC11_1"])
+save_fasta(msa_s, "/Users/avignal/gbigwork/seqapipop/Mitoch_Analysis/Corsica_Sardinia_Paper/all_sub_test.mfa")
+
+
+
 #rotate the sequences
 msa_r = msa.rotate(3)
 save_fasta(msa_r, "/Users/avignal/Documents/bin/Python/msa_tools_project/examples/out_rotated.fasta")
@@ -48,3 +57,6 @@ save_fasta(msa_no_gaps, "/Users/avignal/Documents/bin/Python/msa_tools_project/e
 #genes = read_gff3("/Users/avignal/Documents/bin/Python/msa_tools_project/examples/annotations.gff3")
 #gene_msa = msa.extract_features(genes)
 #print(gene_msa)
+
+
+

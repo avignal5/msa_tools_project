@@ -43,24 +43,23 @@ def build_msa_from_getorganelle(base_dir, output_mfa=None, save_individual=False
 
         with open(fa_path) as f:
             seq_lines = []
-            count = 0
             for line in f:
                 line = line.strip()
                 if line.startswith(">"):
                     old_name = line[1:].strip()
                     continue
-                elif line.startswith(("A", "a", "C", "c", "G", "g", "T", "t", "-")):
-                    sequence = line
-                    count = count + 1
-                    seq_name_part = seq_name + "_" + str(count)
-                    sequences[seq_name_part] = sequence
-                    data[seq_name_part] = (len(sequence), old_name)
-                
-        # Save individual renamed files together in base directory
-                if save_individual:
-                    renamed_path = fa_path.parent.parent / f"{seq_name_part}.fa"
-                    with open(renamed_path, "w") as rf:
-                        rf.write(f">{seq_name_part}\n{sequence}\n")
+                seq_lines.append(line)
+
+        sequence = "".join(seq_lines)
+        sequences[seq_name] = sequence
+
+        data[seq_name] = (len(sequence), old_name)
+
+        # Save individual renamed file
+        if save_individual:
+            renamed_path = fa_path.parent / f"{seq_name}.fa"
+            with open(renamed_path, "w") as rf:
+                rf.write(f">{seq_name}\n{sequence}\n")
 
     # Build MSA object : not possible, as sequences have different lengths
     #msa = MultipleSequenceAlignment(sequences, reference=reference)
